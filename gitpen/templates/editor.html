@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>GitPen</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    </head>
+        <style>
+            .editor-toolbar {
+                text-align: center;
+            }
+            .mde-container {
+                padding-top: 30px;
+                width: 90%;
+                margin: auto;
+            }
+        </style>
+    <body>
+
+        <div class="mde-container">
+            <textarea></textarea>
+            <script>
+                const easyMDE = new EasyMDE({
+                    toolbar: [
+                        "bold",
+                        "italic",
+                        "heading",
+                        "code",
+                        "unordered-list",
+                        "ordered-list",
+                        "link",
+                        "table",
+                        "preview"
+                    ]
+                });
+                easyMDE.value( {{ data }} );
+            </script> 
+        </div>
+    </body>
+</html>
