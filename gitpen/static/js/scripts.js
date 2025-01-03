@@ -134,6 +134,7 @@ function fileAction(path) {
                 activeFilePath = path;
                 const result = md.render(data.markdown);
                 let activeFile = document.getElementById('activeFile');
+                activeFile.style.display = 'block';
                 activeFile.innerHTML = result;
                 activeFile.setAttribute('data-file_path', path);
                 addFileControlButtons();
@@ -185,6 +186,7 @@ function addFileControlButtons() {
 function hideFile() {
     // Hide file
     document.getElementById('activeFile').innerHTML = "";
+    document.getElementById('activeFile').style.display = 'none';
 
     // Hide buttons
     const fileButtons = document.getElementById('fileControls');
