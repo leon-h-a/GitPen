@@ -200,6 +200,7 @@ function hideFile() {
 }
 
 function editFile() {
+    document.getElementById('activeFile').style.display = 'none';
     if (!document.querySelector('.EasyMDEContainer')) {
         easyMDE = new EasyMDE({
             element: document.getElementById('mde-area'),
