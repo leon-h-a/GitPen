@@ -1,0 +1,14 @@
+<div style="margin-top: 50px">
+</div>
+<div class="input_field">
+  <form>
+    <mat-form-field>
+      <mat-label>Select Folder</mat-label>
+      <mat-select [(ngModel)]="selectedPath" name="path">
+        @for (path of paths; track path) {
+        <mat-option [value]="path.value">{{path.value}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
