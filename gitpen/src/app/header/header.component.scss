@@ -1,10 +1,99 @@
-.input_field {
-  width: 80%;
-  margin: auto;
-  max-width: 800px;
+.hamburger {
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  &.white {
+    color: white;
+  }
 }
 
-mat-form-field {
-  width: 100%;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 100vw;
+  height: 100vh;
+  max-width: 500px;
+  background: rgb(197 197 197); 
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left 0.3s ease-in-out;
+  z-index: 999;
+  &.open {
+    left: 0;
+  }
+  display: block;
 }
 
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.folderContainer {
+  margin-left: 25px;
+  margin-top: 100px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  display: block;
+  li {
+    cursor: pointer;
+    margin: 5px 0;
+    display: block;
+    text-align: left;
+    padding-left: 10px;
+    .folder-icon, .file-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+    .expand-collapse {
+      font-size: 18px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+  }
+  ul {
+    margin-left: 10px;
+    padding-left: 0;
+    margin-top: 10px;
+    display: block;
+  }
+}
+.folder-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  max-height: 0;
+  &.expanded {
+    max-height: 1000px;
+  }
+}
+
+.li.expanded .folder-content {
+  transition: max-height 0.3s ease-in-out;
+}
+
+li {
+  ul {
+    display: block;
+    margin-left: 5px;
+  }
+}
