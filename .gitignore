@@ -1,5 +1,7 @@
 # Added
 gitpen/node_modules
+gitpen/.angular
+settings.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

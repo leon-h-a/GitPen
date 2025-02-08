@@ -5,15 +5,18 @@
 <div class="overlay" [class.open]="menuOpen">
     <button class="close-btn" (click)="toggleMenu()">×</button>
     <div class="folderContainer">
+        <div class="logo-container">
+            <img class="logo-fc" src="gitpen_logo_text.png" alt="logo">
+        </div>
         <ul>
             <li *ngFor="let item of fileStructure">
-                <span (click)="toggleFolder(item)">
+                <span (click)="item.type === 'folder' ? toggleFolder(item) : requestFile(item.parent + '/' + item.name)">
 
                     <ng-container *ngIf="item.type === 'folder'">
                         <i class="fas fa-folder folder-icon"></i>
                     </ng-container>
 
-                    <ng-container *ngIf="item.type === 'file'">
+                    <ng-container *ngIf="item.type === 'file'"> 
                         <i class="fas fa-file file-icon"></i>
                     </ng-container>
                     {{ item.name }}
@@ -28,7 +31,7 @@
         <ng-template #folderTemplate let-children="children">
             <ul>
                 <li *ngFor="let child of children" [class.expanded]="child.expanded">
-                    <span (click)="toggleFolder(child)">
+                    <span (click)="child.type === 'folder' ? toggleFolder(child) : requestFile(child.parent + '/' + child.name)">
 
                         <ng-container *ngIf="child.type === 'folder'">
                             <i class="fas fa-folder folder-icon"></i>

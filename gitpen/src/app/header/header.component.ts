@@ -1,11 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ApiService } from '../api.service';
+import { SharedService } from '../shared.service';
 
 
-interface Path {
-    value: string;
+interface FileItem {
+  name: string;
+  parent: string;
+  type: 'file' | 'folder';
 }
+
+interface Folder extends FileItem {
+  type: 'folder';
+  expanded: boolean;
+  children: FileStructure;
+}
+
+interface File extends FileItem {
+  type: 'file';
+}
+
+type FileStructure = (File | Folder)[];
+
 
 @Component({
     selector: 'app-header',
@@ -17,62 +34,34 @@ interface Path {
     styleUrl: './header.component.scss'
 })
 
-export class HeaderComponent {
+export class HeaderComponent implements OnInit{
+    constructor(
+        private api: ApiService,
+        private sharedService: SharedService
+    ) {}
+
+    fileStructure: FileStructure = [];
     menuOpen = false;
+
+    ngOnInit() {
+        this.api.getAll().subscribe(resp => {
+            this.fileStructure = resp;
+        });
+    }
 
     toggleMenu() {
         this.menuOpen = !this.menuOpen;
     }
+
     toggleFolder(item: any) {
         if (item.type === "folder") {
             item.expanded = !item.expanded;
         }
     }
 
-    fileStructure = [
-        {
-            name: "Documents",
-            type: "folder",
-            expanded: false,
-            children: [
-                {
-                    name: "Notes",
-                    type: "folder",
-                    expanded: false,
-                    children: [
-                        { name: "meeting-notes.md", type: "file" },
-                        { name: "todo-list.txt", type: "file" }
-                    ]
-                },
-                {
-                    name: "Projects",
-                    type: "folder",
-                    expanded: false,
-                    children: [
-                        { name: "angular-guide.pdf", type: "file" },
-                        { name: "backend-spec.docx", type: "file" }
-                    ]
-                }
-            ]
-        },
-        {
-            name: "Images",
-            type: "folder",
-            expanded: false,
-            children: [
-                {
-                    name: "Vacation",
-                    type: "folder",
-                    expanded: false,
-                    children: [
-                        { name: "beach.jpg", type: "file" },
-                        { name: "mountain.png", type: "file" }
-                    ]
-                },
-                { name: "logo.svg", type: "file" }
-            ]
-        },
-        { name: "readme.md", type: "file" },
-        { name: "config.json", type: "file" }
-    ];
+    requestFile(filepath: string) {
+        this.api.getFile(filepath).subscribe(resp => {
+            this.sharedService.setFileData(resp.fileContents);
+        });
+    }
 }

@@ -1,6 +1,18 @@
+$fcWidth: 300px;
+$contentPadding: 100px;
+
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+*:focus, *:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
 }

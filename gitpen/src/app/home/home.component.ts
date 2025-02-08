@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'app-home',
@@ -6,6 +7,16 @@ import { Component } from '@angular/core';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit{
+    content: Blob | null = null;
 
+    constructor(
+        private sharedService: SharedService
+    ) { }
+
+    ngOnInit() {
+        this.sharedService.fileData$.subscribe(fileData => {
+            this.content = fileData;
+        });
+    }
 }
