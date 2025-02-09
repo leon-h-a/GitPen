@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ConfigService } from './config.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
-  private baseUrl = 'https://127.0.0.1:5000/api';
 
-  constructor(private http: HttpClient) {}
+export class ApiService {
+  private baseUrl = '';
+
+  constructor(private http: HttpClient, private configService: ConfigService) {
+      this.baseUrl = this.configService.getApiUrl();
+  }
 
   getAll(): Observable<any> {
     return this.http.get<any>(this.baseUrl + '/all');
