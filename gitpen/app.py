@@ -14,6 +14,7 @@ logger.setLevel(logging.INFO)
 cfg = configparser.ConfigParser()
 cfg.read(Path(__file__).parent.parent / 'settings.ini')
 BASE_DIR = cfg["general"]["base_dir"]
+logger.warning(BASE_DIR)
 
 
 @app.route("/", defaults={"path": ""}, methods=['GET'])
@@ -40,7 +41,7 @@ def get_all():
 
 def get_folder_structure(directory: Path, parent_path=""):
     tree = []
-    for item in directory.iterdir():
+    for item in sorted(directory.iterdir()):
         full_path = f"{parent_path}/{item.name}" if parent_path else item.name
         if item.is_dir():
             tree.append({
