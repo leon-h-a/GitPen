@@ -1,5 +1,55 @@
+@use '../../styles' as *;
+
+
+::ng-deep markdown pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+::ng-deep .markdown-body {
+    line-height: 0.1;
+}
+
+::ng-deep markdown img {
+  max-width: 100%;
+  height: auto;
+}
+
+.content-filename {
+  margin-left: auto;
+  text-align: left;
+  padding-right: calc($contentPadding / 2);
+  font-weight: 500;
+  font-size: 30px;
+}
+
 .content {
-  width: 80%;
-  margin: auto;
-  text-align: center;
+  margin-left: auto;
+  padding-top: 40px;
+  padding-bottom: 100px;
+  padding-right: calc($contentPadding / 2);
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .content-filename {
+    padding-top: 100px;
+    width: 80%;
+  }
+  .content {
+    width: 80%;
+  }
+}
+
+@media (min-width: 768px) {
+  .content-filename {
+    padding-top: 50px;
+    width: calc(100% - $fcWidth - $contentPadding);
+  }
+  .content {
+    width: calc(100% - $fcWidth - $contentPadding);
+  }
 }

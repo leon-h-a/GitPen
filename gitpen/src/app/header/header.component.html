@@ -1,14 +1,55 @@
-<div style="margin-top: 50px">
+<div class="hamburger-wrap">
+    <button class="hamburger" [class.white]="menuOpen"(click)="toggleMenu()">
+        &#9776;
+    </button>
 </div>
-<div class="input_field">
-  <form>
-    <mat-form-field>
-      <mat-label>Select Folder</mat-label>
-      <mat-select [(ngModel)]="selectedPath" name="path">
-        @for (path of paths; track path) {
-        <mat-option [value]="path.value">{{path.value}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </form>
+
+<div class="overlay" [class.open]="menuOpen">
+    <button class="close-btn" (click)="toggleMenu()">×</button>
+    <div class="folderContainer">
+        <div class="logo-container">
+            <img class="logo-fc" src="gitpen_logo_text.png" alt="logo">
+        </div>
+        <ul>
+            <li *ngFor="let item of fileStructure">
+                <span (click)="item.type === 'folder' ? toggleFolder(item) : requestFile(item.parent + '/' + item.name)">
+
+                    <ng-container *ngIf="item.type === 'folder'">
+                        <i class="fas fa-folder folder-icon"></i>
+                    </ng-container>
+
+                    <ng-container *ngIf="item.type === 'file'"> 
+                        <i class="fas fa-file file-icon"></i>
+                    </ng-container>
+                    {{ item.name }}
+                </span>
+
+                <div class="folder-content" *ngIf="item.type === 'folder'" [class.expanded]="item.expanded">
+                    <ng-container *ngTemplateOutlet="folderTemplate; context: { children: item.children }"></ng-container>
+                </div>
+            </li>
+        </ul>
+
+        <ng-template #folderTemplate let-children="children">
+            <ul>
+                <li *ngFor="let child of children" [class.expanded]="child.expanded">
+                    <span (click)="child.type === 'folder' ? toggleFolder(child) : requestFile(child.parent + '/' + child.name)">
+
+                        <ng-container *ngIf="child.type === 'folder'">
+                            <i class="fas fa-folder folder-icon"></i>
+                        </ng-container>
+
+                        <ng-container *ngIf="child.type === 'file'">
+                            <i class="fas fa-file file-icon"></i>
+                        </ng-container>
+                        {{ child.name }}
+                    </span>
+
+                    <div class="folder-content" *ngIf="child.type === 'folder'" [class.expanded]="child.expanded">
+                        <ng-container *ngTemplateOutlet="folderTemplate; context: { children: child.children }"></ng-container>
+                    </div>
+                </li>
+            </ul>
+        </ng-template>
+    </div>
 </div>

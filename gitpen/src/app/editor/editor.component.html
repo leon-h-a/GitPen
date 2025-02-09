@@ -1,0 +1,13 @@
+<div (dbclick)="sharedService.toggleEdit()" (touchend)="handleTouchEdit($event)">
+    <div class="content-filename">
+        <i class="fas fa-file file-icon"></i>
+        {{ fileName }}
+    </div>
+    <div class="quill-container">
+        <quill-editor 
+            [(ngModel)]="content"
+            [modules]="editorModules"
+            class="quill">
+        </quill-editor>
+    </div>
+</div>

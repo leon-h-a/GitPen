@@ -1,0 +1,56 @@
+@use '../../styles' as *;
+
+$ql-radius: 10px;
+
+::ng-deep .ql-container {
+    border-radius: 0 0 $ql-radius $ql-radius; 
+}
+
+::ng-deep .ql-toolbar {
+  background-color: black;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  border-radius: $ql-radius $ql-radius 0 0; 
+}
+
+.quill-container {
+  padding-top: 40px;
+  padding-right: 50px;
+  margin-left: auto;
+  padding-right: calc($contentPadding / 2);
+}
+
+.quill {
+    width: 100%;
+}
+
+.content-filename {
+  margin-left: auto;
+  text-align: left;
+  padding-right: calc($contentPadding / 2);
+  font-weight: 500;
+  font-size: 30px;
+}
+
+@media (max-width: 768px) {
+    .quill-container {
+        width: 80%;
+    }
+    .content-filename {
+        padding-top: 100px;
+        width: 80%;
+  }
+}
+
+@media (min-width: 768px) {
+    .quill-container {
+        width: calc(100% - $fcWidth - $contentPadding);
+    }
+    .content-filename {
+        padding-top: 50px;
+        width: calc(100% - $fcWidth - $contentPadding);
+  }
+}

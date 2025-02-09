@@ -1,0 +1,12 @@
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div 
+        class="modal-content"
+        (wheel)="zoomImage($event)"
+        (touchmove)="handleTouchMove($event)"
+        (touchend)="handleTouchEnd()">
+        <img 
+            [src]="imageSrc"
+            alt="Full-size image"
+            [style.transform]="'scale(' + zoomLevel + ')'">
+    </div>
+</div>
