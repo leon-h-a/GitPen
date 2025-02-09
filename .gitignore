@@ -3,6 +3,7 @@ gitpen/node_modules
 gitpen/.angular
 settings.ini
 gitpen/src/assets
+proxy.conf.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
