@@ -6,17 +6,6 @@ body {
   height: 100vh;
 }
 
-span, .folder-icon, .file-icon {
-  transition: opacity 0.1s ease-in-out;
-  &:active {
-    opacity: 0.4;
-  }
-}
-
-span:hover, .folder-icon:hover, .file-icon:hover {
-  opacity: 0.4;
-}
-
 .hamburger-wrap {
   width: 100%;
   top: 0;
@@ -161,6 +150,11 @@ li {
     width: calc(100% - $fcWidth);
     transition: margin-left 0.1s ease-in-out;
   }
+
+  span:hover, .folder-icon:hover, .file-icon:hover {
+    opacity: 0.4;
+  }
+
 
   .hamburger-wrap {
     display: none;
