@@ -119,6 +119,6 @@ export class EditorComponent {
 
         setTimeout(() => {
             this.isTouching = false;
-        }, 300)
+        }, 150)
     }
 }

@@ -1,5 +1,5 @@
 import { ImageViewComponent } from '../image-view/image-view.component'; 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { EditorComponent } from '../editor/editor.component'; 
 import { SharedService } from '../shared.service';
 import { Title } from '@angular/platform-browser';
@@ -19,12 +19,18 @@ import { MarkdownModule } from 'ngx-markdown';
     styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit{
+    private isTouching: boolean = false;
+    private isScrolling: boolean = false;
+    private lastTapTime: number = 0;
+    private lastTapX: number = 0;
+    private lastTapY: number = 0;
+
+
     filename: string | null = null;
     filePath: string | null = null;
     fileType: string | null = null;
     content: string | null = null;
     private lastTap: number = 0;
-    private isTouching: boolean = false;
 
 
     constructor(
@@ -73,15 +79,62 @@ export class HomeComponent implements OnInit{
         this.sharedService.toggleEdit();
     }
 
-    handleTouchEdit (event: TouchEvent) {
-        if (this.isTouching) {
-            this.sharedService.toggleEdit();
-            this.isTouching = false;
-        } else {
-            this.isTouching = true;
+    handleTouchEdit(event: TouchEvent) {
+        if (!event.touches || event.touches.length === 0) {
+            return;
         }
+
+        const touch = event.touches[0];
+        const currentTime = new Date().getTime();
+        const tapX = touch.clientX;
+        const tapY = touch.clientY;
+
+        if (this.isScrolling) {
+            return;
+        }
+
+        if (this.lastTapTime && currentTime - this.lastTapTime < 300) {
+            const dx = Math.abs(tapX - this.lastTapX);
+            const dy = Math.abs(tapY - this.lastTapY);
+
+            if (dx < 100 && dy < 100) {
+                this.sharedService.toggleEdit();
+                this.isTouching = false;
+                return;
+            }
+        }
+
+        this.lastTapTime = currentTime;
+        this.lastTapX = tapX;
+        this.lastTapY = tapY;
+
+        // Reset after a short delay
         setTimeout(() => {
             this.isTouching = false;
-        }, 300)
+        }, 300);
     }
+
+    @HostListener('touchmove', ['$event'])
+    onTouchMove(event: TouchEvent) {
+        this.isScrolling = true;
+    }
+
+    @HostListener('touchend', ['$event'])
+    onTouchEnd(event: TouchEvent) {
+        setTimeout(() => {
+            this.isScrolling = false;
+        }, 200);
+    }
+
+    // handleTouchEdit (event: TouchEvent) {
+    //     if (this.isTouching) {
+    //         this.sharedService.toggleEdit();
+    //         this.isTouching = false;
+    //     } else {
+    //         this.isTouching = true;
+    //     }
+    //     setTimeout(() => {
+    //         this.isTouching = false;
+    //     }, 300)
+    // }
 }
