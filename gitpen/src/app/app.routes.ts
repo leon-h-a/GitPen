@@ -4,6 +4,5 @@ import { SettingsComponent } from './settings/settings.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'settings', component: SettingsComponent },
   { path: '**', redirectTo: '' }
 ];

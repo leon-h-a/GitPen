@@ -1,89 +1,93 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from pathlib import Path
+import configparser
+import logging
+import html2text
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="dist/test/browser", static_url_path="/")
+CORS(app)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
-dirs = {
-    # "<alias for FE>" : "<full path used by BE>"
-    "alias": "path",
-}
-
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-
-@app.route("/get-dirs", methods=['GET'])
-def directory_update():
-    return jsonify({"dirs": dirs}), 200
+cfg = configparser.ConfigParser()
+cfg.read(Path(__file__).parent.parent / 'settings.ini')
+BASE_DIR = cfg["general"]["base_dir"]
 
 
-@app.route("/get-content", methods=['POST'])
-def get_content():
-    alias = request.json.get('path_alias')
-    path = dirs[alias]
-
-    def build_structure(path):
-        structure = {
-            "path": path,
-            "files": [],
-            "directories": {}
-        }
-        for item in os.listdir(path):
-            if item.startswith("."):
-                continue
-            item_path = os.path.join(path, item)
-            if os.path.isdir(item_path):
-                if "GitPen" in item_path:
-                    continue
-                structure["directories"][item] = build_structure(item_path)
-            else:
-                structure["files"].append({"name": item, "path": item_path})
-        return structure
-
-    return jsonify(build_structure(path))
+@app.route("/", defaults={"path": ""}, methods=['GET'])
+@app.route("/<path:path>")
+def catch_all(path):
+    return app.send_static_file("index.html")
 
 
-@app.route("/read-file", methods=['POST'])
-def read_file():
-    file_path = request.json.get('file_path')
-
-    if not file_path or not os.path.isfile(file_path):
-        return jsonify({'error': 'File not found'}), 400
-
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            file_content = file.read()
-
-        # todo: host img files from Flask
-        # dir_path = os.path.dirname(file_path)
-        # pattern = r"!\[([^\]]*)\]\(([^)]+)\)"
-        # file_content = re.sub(
-        #     pattern,
-        #     rf"![\1]({dir_path}/\2)",
-        #     file_content
-        # )
-
-        return jsonify({'markdown': file_content})
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+@app.route('/api/test', methods=['GET'])
+def test():
+    return jsonify({"message": "Hello World"})
 
 
-@app.route("/save-file", methods=['POST'])
+@app.route('/api/all', methods=['GET'])
+def get_all():
+    root_path = Path(BASE_DIR)
+    if not root_path.exists():
+        return jsonify({"error": "Base directory not found"}), 404
+
+    folder_tree = get_folder_structure(root_path)
+    logger.debug(folder_tree)
+    return jsonify(folder_tree)
+
+
+def get_folder_structure(directory: Path, parent_path=""):
+    tree = []
+    for item in directory.iterdir():
+        full_path = f"{parent_path}/{item.name}" if parent_path else item.name
+        if item.is_dir():
+            tree.append({
+                "name": item.name,
+                "type": "folder",
+                "parent": parent_path,
+                "children": get_folder_structure(item, full_path)
+            })
+        else:
+            tree.append({
+                "name": item.name,
+                "type": "file",
+                "parent": parent_path
+            })
+    return tree
+
+
+@app.route('/api/get-file', methods=['GET'])
+def get_file():
+    filepath = request.args.get('filepath')
+    logger.debug(filepath)
+
+    with open(BASE_DIR + '/' + filepath, 'r') as f:
+        f_value = f.read()
+    return jsonify(
+        dict(
+            fileName=os.path.basename(filepath),
+            fileContents=f_value,
+            filePath=filepath
+            )
+        )
+
+
+@app.route('/api/save-file', methods=['POST'])
 def save_file():
-    file_path = request.json.get('updateFile')
-    file_content = request.json.get('updateContent')
+    data = request.get_json()
+    filepath = data.get('filepath')
+    content = data.get('content')
 
-    if not file_path or not os.path.isfile(file_path):
-        return jsonify({'error': 'File not found'}), 400
+    logger.debug(filepath)
+    logger.debug(content)
 
-    try:
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file_content = file.write(file_content)
+    with open(BASE_DIR + '/' + filepath, 'w') as f:
+        f.write(html2text.html2text(content))
 
-        return jsonify({'action': 'success'}), 200
+    return jsonify(data)
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
