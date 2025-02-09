@@ -60,8 +60,11 @@ export class HeaderComponent implements OnInit{
     }
 
     requestFile(filepath: string) {
+        this.menuOpen = false;
         this.api.getFile(filepath).subscribe(resp => {
+            this.sharedService.setFileName(resp.fileName);
             this.sharedService.setFileData(resp.fileContents);
+            this.sharedService.setFilePath(resp.filePath);
         });
     }
 }

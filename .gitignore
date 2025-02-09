@@ -2,6 +2,7 @@
 gitpen/node_modules
 gitpen/.angular
 settings.ini
+gitpen/src/assets
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

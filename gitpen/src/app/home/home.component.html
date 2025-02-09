@@ -1,3 +1,18 @@
-<div class="content">
-    {{ content }}
+<div (dblclick)="handleClickEdit($event)" (touchend)="handleTouchEdit($event)">
+    <div *ngIf="sharedService.editActive">
+        <app-editor></app-editor>
+    </div>
+
+    <div *ngIf="!sharedService.editActive">
+        <div class="content-filename">
+            <i *ngIf="content" class="fas fa-file file-icon"></i>
+            {{ filename }}
+        </div>
+        <div *ngIf="content" class="content">
+            <div *ngIf="fileType === 'text'">{{ content }}</div>
+            <markdown *ngIf="fileType === 'markdown'" [data]="content" (click)="markdownClick($event)"></markdown>
+        </div>
+    </div>
 </div>
+
+<app-image-view></app-image-view>

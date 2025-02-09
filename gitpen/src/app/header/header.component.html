@@ -1,6 +1,8 @@
-<button class="hamburger" [class.white]="menuOpen"(click)="toggleMenu()">
-    &#9776;
-</button>
+<div class="hamburger-wrap">
+    <button class="hamburger" [class.white]="menuOpen"(click)="toggleMenu()">
+        &#9776;
+    </button>
+</div>
 
 <div class="overlay" [class.open]="menuOpen">
     <button class="close-btn" (click)="toggleMenu()">×</button>

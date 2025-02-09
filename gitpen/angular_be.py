@@ -1,8 +1,10 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pathlib import Path
-import logging
 import configparser
+import logging
+import html2text
 
 app = Flask(__name__)
 CORS(app)
@@ -57,7 +59,28 @@ def get_file():
 
     with open(BASE_DIR + '/' + filepath, 'r') as f:
         f_value = f.read()
-    return jsonify(dict(fileContents=f_value))
+    return jsonify(
+        dict(
+            fileName=os.path.basename(filepath),
+            fileContents=f_value,
+            filePath=filepath
+            )
+        )
+
+
+@app.route('/api/save-file', methods=['POST'])
+def save_file():
+    data = request.get_json()
+    filepath = data.get('filepath')
+    content = data.get('content')
+
+    logger.debug(filepath)
+    logger.debug(content)
+
+    with open(BASE_DIR + '/' + filepath, 'w') as f:
+        f.write(html2text.html2text(content))
+
+    return jsonify(data)
 
 
 if __name__ == '__main__':
