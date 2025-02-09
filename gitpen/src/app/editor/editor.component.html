@@ -1,4 +1,4 @@
-<div (dbclick)="sharedService.toggleEdit()" (touchend)="handleTouchEdit($event)">
+<div (dblclick)="handleClickEdit($event)" (touchend)="handleTouchEdit($event)">
     <div class="content-filename">
         <i class="fas fa-file file-icon"></i>
         {{ fileName }}

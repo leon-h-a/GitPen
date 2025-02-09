@@ -90,6 +90,17 @@ export class EditorComponent {
         }
     }
 
+    handleClickEdit(event: MouseEvent) {
+        if (this.sharedService.editActive) {
+            if (this.content && this.filePath){
+                this.api.saveFile(this.content, this.filePath).subscribe(resp => {
+                    this.sharedService.setFileData(resp.content);
+                    this.sharedService.editActive = false;
+                });
+            }
+        }
+    }
+
     handleTouchEdit (event: TouchEvent) {
         if (this.isTouching) {
             if (this.sharedService.editActive) {
