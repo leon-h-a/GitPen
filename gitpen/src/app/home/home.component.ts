@@ -75,16 +75,19 @@ export class HomeComponent implements OnInit{
         }
     }
 
-    handleClickEdit (event: Event) {
-        this.sharedService.toggleEdit();
+    handleClickEdit (event: MouseEvent) {
+        if (event.button === 1) {
+            this.sharedService.toggleEdit();
+            event.preventDefault();
+        }
     }
 
     handleTouchEdit(event: TouchEvent) {
-        if (!event.touches || event.touches.length === 0) {
+        if (event.changedTouches.length === 0) {
             return;
         }
 
-        const touch = event.touches[0];
+        const touch = event.changedTouches[0];
         const currentTime = new Date().getTime();
         const tapX = touch.clientX;
         const tapY = touch.clientY;
@@ -103,12 +106,10 @@ export class HomeComponent implements OnInit{
                 return;
             }
         }
-
         this.lastTapTime = currentTime;
         this.lastTapX = tapX;
         this.lastTapY = tapY;
 
-        // Reset after a short delay
         setTimeout(() => {
             this.isTouching = false;
         }, 300);
@@ -125,16 +126,4 @@ export class HomeComponent implements OnInit{
             this.isScrolling = false;
         }, 200);
     }
-
-    // handleTouchEdit (event: TouchEvent) {
-    //     if (this.isTouching) {
-    //         this.sharedService.toggleEdit();
-    //         this.isTouching = false;
-    //     } else {
-    //         this.isTouching = true;
-    //     }
-    //     setTimeout(() => {
-    //         this.isTouching = false;
-    //     }, 300)
-    // }
 }

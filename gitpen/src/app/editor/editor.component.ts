@@ -1,5 +1,5 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Component, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, AfterViewChecked, HostListener } from '@angular/core';
 import { SharedService } from '../shared.service';
 import { QuillEditorComponent } from 'ngx-quill';
 import { ApiService } from '../api.service';
@@ -26,7 +26,13 @@ export class EditorComponent {
     content: string | null = null;
     filePath: string | null = null;
     fileName: string | null = null;
+
     private isTouching: boolean = false;
+    private isScrolling: boolean = false;
+    private lastTapTime: number = 0;
+    private lastTapX: number = 0;
+    private lastTapY: number = 0;
+
     private md = new markdownit({
         html: true,
         linkify: true,
@@ -91,34 +97,72 @@ export class EditorComponent {
     }
 
     handleClickEdit(event: MouseEvent) {
-        if (this.sharedService.editActive) {
-            if (this.content && this.filePath){
-                this.api.saveFile(this.content, this.filePath).subscribe(resp => {
-                    this.sharedService.setFileData(resp.content);
-                    this.sharedService.editActive = false;
-                });
+        if (event.button === 1) {
+            event.preventDefault();
+            if (this.sharedService.editActive) {
+                if (this.content && this.filePath){
+                    this.api.saveFile(this.content, this.filePath).subscribe(resp => {
+                        setTimeout(() => {
+                            this.sharedService.setFileData(resp.content);
+                            this.sharedService.editActive = false;
+                        }, 50);
+                    });
+                }
             }
         }
     }
 
-    handleTouchEdit (event: TouchEvent) {
-        if (this.isTouching) {
-            if (this.sharedService.editActive) {
+    handleTouchEdit(event: TouchEvent) {
+        if (event.changedTouches.length === 0) {
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        const currentTime = new Date().getTime();
+        const tapX = touch.clientX;
+        const tapY = touch.clientY;
+
+        if (this.isScrolling) {
+            console.log(2);
+            return;
+        }
+
+        if (this.lastTapTime && currentTime - this.lastTapTime < 300) {
+            const dx = Math.abs(tapX - this.lastTapX);
+            const dy = Math.abs(tapY - this.lastTapY);
+
+            if (dx < 100 && dy < 100) {
                 if (this.content && this.filePath){
                     this.api.saveFile(this.content, this.filePath).subscribe(resp => {
-                        this.sharedService.setFileData(resp.content);
-                        this.sharedService.editActive = false;
+                        setTimeout(() => {
+                            this.sharedService.setFileData(resp.content);
+                            this.sharedService.editActive = false;
+                        }, 50);
                     });
                 }
+                this.sharedService.toggleEdit();
+                this.isTouching = false;
+                return;
             }
-            this.sharedService.toggleEdit();
-            this.isTouching = false;
-        } else {
-            this.isTouching = true;
         }
+        this.lastTapTime = currentTime;
+        this.lastTapX = tapX;
+        this.lastTapY = tapY;
 
         setTimeout(() => {
             this.isTouching = false;
-        }, 150)
+        }, 300);
+    }
+
+    @HostListener('touchmove', ['$event'])
+    onTouchMove(event: TouchEvent) {
+        this.isScrolling = true;
+    }
+
+    @HostListener('touchend', ['$event'])
+    onTouchEnd(event: TouchEvent) {
+        setTimeout(() => {
+            this.isScrolling = false;
+        }, 200);
     }
 }

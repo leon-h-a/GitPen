@@ -1,4 +1,4 @@
-<div (dblclick)="handleClickEdit($event)" (touchend)="handleTouchEdit($event)">
+<div (mousedown)="handleClickEdit($event)" (touchend)="handleTouchEdit($event)">
     <div *ngIf="sharedService.editActive">
         <app-editor></app-editor>
     </div>
