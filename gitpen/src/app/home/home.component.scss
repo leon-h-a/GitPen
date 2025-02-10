@@ -7,6 +7,10 @@
   white-space: pre-wrap;
   word-wrap: break-word;
   word-break: break-all;
+  background-color: #b4d8fb69;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid black;
 }
 
 ::ng-deep .markdown-body {
@@ -16,6 +20,13 @@
 ::ng-deep markdown img {
   max-width: 100%;
   height: auto;
+}
+
+::ng-deep markdown code:not(pre code) {
+  background-color: #e6e6e6;
+  font-weight: bold;
+  padding: 0 5px;
+  border-radius: 5px;
 }
 
 .content-filename {
