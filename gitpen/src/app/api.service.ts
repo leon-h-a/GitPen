@@ -24,6 +24,10 @@ export class ApiService {
     return this.http.get<any>(this.baseUrl + '/get-file', { params: { filepath: filepath } });
   }
 
+  getLast(): Observable<any> {
+    return this.http.get<any>(this.baseUrl + '/get-last');
+  }
+
   saveFile(content: string, filepath: string): Observable<any> {
     return this.http.post<any>(this.baseUrl + '/save-file', { content: content, filepath: filepath} );
   }

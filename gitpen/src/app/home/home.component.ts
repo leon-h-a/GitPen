@@ -5,6 +5,7 @@ import { SharedService } from '../shared.service';
 import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MarkdownModule } from 'ngx-markdown';
+import { ApiService } from '../api.service';
 
 @Component({
     selector: 'app-home',
@@ -35,6 +36,7 @@ export class HomeComponent implements OnInit{
 
     constructor(
         public sharedService: SharedService,
+        private api: ApiService,
         private title: Title
     ) { }
 
@@ -61,6 +63,15 @@ export class HomeComponent implements OnInit{
                 this.title.setTitle("GitPen - " + this.filename);
             } else {
                 this.title.setTitle("GitPen");
+            }
+        });
+        this.api.getLast().subscribe(resp => {
+            if (resp.lastFile !== "none") {
+                this.api.getFile(resp.lastFile).subscribe(resp => {
+                    this.sharedService.setFileName(resp.fileName);
+                    this.sharedService.setFileData(resp.fileContents);
+                    this.sharedService.setFilePath(resp.filePath);
+                });
             }
         });
     }

@@ -1,4 +1,5 @@
 import os
+import time
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pathlib import Path
@@ -14,7 +15,15 @@ logger.setLevel(logging.INFO)
 cfg = configparser.ConfigParser()
 cfg.read(Path(__file__).parent.parent / 'settings.ini')
 BASE_DIR = cfg["general"]["base_dir"]
-logger.warning(BASE_DIR)
+REMEMBER_LAST = int(cfg["general"]["remember_last"])
+
+logger.info(BASE_DIR)
+
+
+last_file = dict(
+    filepath=None,
+    ts=0
+)
 
 
 @app.route("/", defaults={"path": ""}, methods=['GET'])
@@ -59,6 +68,25 @@ def get_folder_structure(directory: Path, parent_path=""):
     return tree
 
 
+@app.route('/api/get-last', methods=['GET'])
+def get_last():
+    if (
+        REMEMBER_LAST != 0 and
+        (time.time() - last_file["ts"]) <= REMEMBER_LAST * 60
+    ):
+        return jsonify(
+            dict(
+                lastFile=last_file["filepath"]
+            )
+        )
+    else:
+        return jsonify(
+            dict(
+                lastFile="none"
+            )
+        )
+
+
 @app.route('/api/get-file', methods=['GET'])
 def get_file():
     filepath = request.args.get('filepath')
@@ -66,6 +94,11 @@ def get_file():
 
     with open(BASE_DIR + '/' + filepath, 'r') as f:
         f_value = f.read()
+
+    if REMEMBER_LAST:
+        last_file["filepath"] = filepath
+        last_file["ts"] = time.time()
+
     return jsonify(
         dict(
             fileName=os.path.basename(filepath),
